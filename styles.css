@@ -359,3 +359,141 @@ body {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.02); }
 }
+
+/* Music Control Styles */
+.music-control {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+}
+
+.music-btn {
+    background: linear-gradient(45deg, #ff6b9d, #c44569);
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 107, 157, 0.6);
+}
+
+.music-btn.playing {
+    animation: musicPulse 1.5s ease-in-out infinite;
+}
+
+.music-btn.muted {
+    background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+    box-shadow: 0 4px 15px rgba(127, 140, 141, 0.4);
+}
+
+@keyframes musicPulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 6px 25px rgba(255, 107, 157, 0.8);
+    }
+}
+
+/* Mobile-specific styles */
+.mobile-instruction {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    z-index: 10001;
+    animation: fadeInOut 3s ease-in-out;
+    text-align: center;
+}
+
+.instruction-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.instruction-content i {
+    font-size: 2rem;
+    color: #ff6b9d;
+}
+
+.instruction-content p {
+    margin: 0;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    20%, 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+/* Enhanced mobile music button */
+.music-btn.mobile-ready {
+    animation: mobilePulse 2s ease-in-out infinite;
+}
+
+@keyframes mobilePulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+    }
+    50% { 
+        transform: scale(1.1);
+        box-shadow: 0 8px 25px rgba(255, 107, 157, 0.8);
+        background: linear-gradient(45deg, #ff9a9e, #ff6b9d);
+    }
+}
+
+/* Touch-friendly improvements for mobile */
+@media (max-width: 768px) {
+    .music-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 1.4rem;
+        top: 15px;
+        right: 15px;
+    }
+    
+    .btn {
+        min-height: 60px;
+        font-size: 1.3rem;
+        padding: 20px 30px;
+    }
+    
+    .main-container {
+        padding: 30px 15px;
+    }
+    
+    /* Better touch targets */
+    .btn, .music-btn {
+        -webkit-tap-highlight-color: rgba(255, 107, 157, 0.3);
+        touch-action: manipulation;
+    }
+    
+    /* Prevent zoom on double tap */
+    * {
+        touch-action: manipulation;
+    }
+}

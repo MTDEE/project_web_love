@@ -220,6 +220,169 @@ document.addEventListener('mousemove', function(e) {
     }
 });
 
+// Music Control Functions
+let musicPlaying = false;
+let backgroundMusic = null;
+let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+function initializeMusic() {
+    backgroundMusic = document.getElementById('backgroundMusic');
+    const musicBtn = document.getElementById('musicToggle');
+    
+    if (backgroundMusic) {
+        // Set volume to a comfortable level
+        backgroundMusic.volume = 0.5;
+        
+        // Add event listeners
+        backgroundMusic.addEventListener('canplaythrough', function() {
+            console.log('Music loaded successfully');
+        });
+        
+        backgroundMusic.addEventListener('error', function(e) {
+            console.log('Music loading error:', e);
+            musicBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            musicBtn.classList.add('muted');
+        });
+        
+        // Mobile-friendly setup
+        if (isMobile) {
+            // On mobile, always show play button initially
+            musicBtn.innerHTML = '<i class="fas fa-play"></i>';
+            musicBtn.classList.add('mobile-ready');
+            
+            // Add touch event for better mobile interaction
+            musicBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault(); // Prevent double-tap zoom
+                toggleMusic();
+            });
+            
+            // Show instruction for mobile users
+            setTimeout(() => {
+                if (!musicPlaying) {
+                    showMobileInstruction();
+                }
+            }, 2000);
+        } else {
+            // Desktop setup
+            musicBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    }
+}
+
+function showMobileInstruction() {
+    const instruction = document.createElement('div');
+    instruction.className = 'mobile-instruction';
+    instruction.innerHTML = `
+        <div class="instruction-content">
+            <i class="fas fa-music"></i>
+            <p>แตะปุ่มเพลงเพื่อเล่นเสียง 🎵</p>
+        </div>
+    `;
+    document.body.appendChild(instruction);
+    
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+        if (instruction && instruction.parentNode) {
+            instruction.remove();
+        }
+    }, 3000);
+    
+    // Hide when music starts playing
+    if (backgroundMusic) {
+        backgroundMusic.addEventListener('play', () => {
+            if (instruction && instruction.parentNode) {
+                instruction.remove();
+            }
+        });
+    }
+}
+
+function toggleMusic() {
+    const musicBtn = document.getElementById('musicToggle');
+    
+    if (!backgroundMusic) {
+        backgroundMusic = document.getElementById('backgroundMusic');
+    }
+    
+    if (backgroundMusic) {
+        if (musicPlaying) {
+            backgroundMusic.pause();
+            musicPlaying = false;
+            musicBtn.classList.remove('playing');
+            musicBtn.classList.add('muted');
+            musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            // For mobile, we need to handle the interaction properly
+            backgroundMusic.currentTime = 0;
+            
+            // Force loading for mobile
+            if (isMobile) {
+                backgroundMusic.load();
+            }
+            
+            const playPromise = backgroundMusic.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    musicPlaying = true;
+                    musicBtn.classList.add('playing');
+                    musicBtn.classList.remove('muted');
+                    musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    console.log('Music playing successfully');
+                    
+                    // Vibrate on mobile for feedback
+                    if (isMobile && navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                }).catch(error => {
+                    console.log('Error playing music:', error);
+                    musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    musicBtn.classList.add('muted');
+                    
+                    // Show mobile-specific instruction
+                    if (isMobile) {
+                        alert('กรุณาเปิดเสียงในเบราว์เซอร์และลองอีกครั้ง 🎵');
+                    } else {
+                        alert('คลิกปุ่มเพลงอีกครั้งเพื่อเล่นเพลง 🎵');
+                    }
+                });
+            }
+        }
+    }
+}
+
+// Enhanced mobile interaction
+document.addEventListener('touchstart', function() {
+    if (backgroundMusic && !musicPlaying && isMobile) {
+        // Prepare audio for mobile
+        backgroundMusic.load();
+    }
+}, { once: true });
+
+// Add click event to play music on user interaction
+document.addEventListener('click', function() {
+    if (backgroundMusic && !musicPlaying) {
+        // Try to play music after user interaction
+        const playPromise = backgroundMusic.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                musicPlaying = true;
+                const musicBtn = document.getElementById('musicToggle');
+                if (musicBtn) {
+                    musicBtn.classList.add('playing');
+                    musicBtn.classList.remove('muted');
+                    musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                }
+            }).catch(() => {
+                // Silently fail - user can manually start music
+            });
+        }
+    }
+}, { once: true });
+
+// Initialize music when page loads
+document.addEventListener('DOMContentLoaded', initializeMusic);
+
 // Add fadeOut animation
 const style = document.createElement('style');
 style.textContent = `

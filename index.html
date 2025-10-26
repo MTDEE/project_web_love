@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop preload="auto">
+        <source src="song.mp3" type="audio/mpeg">
+        <source src="song.mp3" type="audio/mp3">
+        <!-- Your song file -->
+    </audio>
+    
+    <!-- Music Control -->
+    <div class="music-control">
+        <button id="musicToggle" class="music-btn" onclick="toggleMusic()">
+            <i class="fas fa-music"></i>
+        </button>
+    </div>
     <!-- Floating Hearts Animation -->
     <div class="hearts-container">
         <div class="heart heart1">💖</div>

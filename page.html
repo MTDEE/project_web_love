@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="celebrationMusic" loop preload="auto">
+        <source src="song.mp3" type="audio/mpeg">
+        <source src="song.mp3" type="audio/mp3">
+        <!-- Your celebration song -->
+    </audio>
+    
+    <!-- Music Control -->
+    <div class="music-control">
+        <button id="musicToggle" class="music-btn" onclick="toggleMusic()">
+            <i class="fas fa-music"></i>
+        </button>
+    </div>
     <!-- Celebration Background -->
     <div class="celebration-bg">
         <div class="confetti"></div>
@@ -102,6 +115,109 @@
     </div>
 
     <script>
+        // Music Control Functions
+        let musicPlaying = false;
+        let celebrationMusic = null;
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        function initializeMusic() {
+            celebrationMusic = document.getElementById('celebrationMusic');
+            const musicBtn = document.getElementById('musicToggle');
+            
+            if (celebrationMusic) {
+                // Set volume to a comfortable level
+                celebrationMusic.volume = 0.6;
+                
+                // Add event listeners
+                celebrationMusic.addEventListener('canplaythrough', function() {
+                    console.log('Celebration music loaded successfully');
+                });
+                
+                celebrationMusic.addEventListener('error', function(e) {
+                    console.log('Celebration music loading error:', e);
+                    musicBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                    musicBtn.classList.add('muted');
+                });
+                
+                // Mobile-friendly setup
+                if (isMobile) {
+                    musicBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    musicBtn.classList.add('mobile-ready');
+                    
+                    // Add touch event for better mobile interaction
+                    musicBtn.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        toggleMusic();
+                    });
+                } else {
+                    // Desktop - try auto-play after delay
+                    musicBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    setTimeout(() => {
+                        const playPromise = celebrationMusic.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                musicPlaying = true;
+                                musicBtn.classList.add('playing');
+                                musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                            }).catch(() => {
+                                musicBtn.innerHTML = '<i class="fas fa-play"></i>';
+                            });
+                        }
+                    }, 1000);
+                }
+            }
+        }
+
+        function toggleMusic() {
+            const musicBtn = document.getElementById('musicToggle');
+            
+            if (!celebrationMusic) {
+                celebrationMusic = document.getElementById('celebrationMusic');
+            }
+            
+            if (celebrationMusic) {
+                if (musicPlaying) {
+                    celebrationMusic.pause();
+                    musicPlaying = false;
+                    musicBtn.classList.remove('playing');
+                    musicBtn.classList.add('muted');
+                    musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                } else {
+                    // Force loading for mobile
+                    if (isMobile) {
+                        celebrationMusic.load();
+                    }
+                    
+                    celebrationMusic.currentTime = 0;
+                    
+                    const playPromise = celebrationMusic.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            musicPlaying = true;
+                            musicBtn.classList.add('playing');
+                            musicBtn.classList.remove('muted');
+                            musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                            console.log('Celebration music playing successfully');
+                            
+                            // Vibrate on mobile for feedback
+                            if (isMobile && navigator.vibrate) {
+                                navigator.vibrate(100);
+                            }
+                        }).catch(error => {
+                            console.log('Error playing celebration music:', error);
+                            musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                            musicBtn.classList.add('muted');
+                            
+                            if (isMobile) {
+                                alert('กรุณาเปิดเสียงในเบราว์เซอร์และลองอีกครั้ง 🎵');
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    
         // Rotate love messages
         let currentMessage = 0;
         const messages = document.querySelectorAll('.love-message');
@@ -157,13 +273,18 @@
         `;
         document.head.appendChild(style);
         
-        // Auto celebration on page load
-        setTimeout(createCelebration, 1000);
-        
-        // Love bar animation
-        setTimeout(() => {
-            document.querySelector('.love-fill').style.width = '100%';
-        }, 500);
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMusic();
+            
+            // Auto celebration on page load
+            setTimeout(createCelebration, 1000);
+            
+            // Love bar animation
+            setTimeout(() => {
+                document.querySelector('.love-fill').style.width = '100%';
+            }, 500);
+        });
     </script>
 </body>
 </html>
