@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 You Said Yes! 💕</title>
+    <link rel="stylesheet" href="styles_page.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Celebration Background -->
+    <div class="celebration-bg">
+        <div class="confetti"></div>
+        <div class="hearts-explosion">
+            <div class="heart-particle heart1">💖</div>
+            <div class="heart-particle heart2">💕</div>
+            <div class="heart-particle heart3">💝</div>
+            <div class="heart-particle heart4">💗</div>
+            <div class="heart-particle heart5">💘</div>
+            <div class="heart-particle heart6">💞</div>
+            <div class="heart-particle heart7">💓</div>
+            <div class="heart-particle heart8">💌</div>
+        </div>
+        
+        <!-- Floating balloons -->
+        <div class="balloons">
+            <div class="balloon balloon1">🎈</div>
+            <div class="balloon balloon2">🎈</div>
+            <div class="balloon balloon3">🎈</div>
+        </div>
+    </div>
+
+    <div class="body">
+        <div class="celebration-container">
+            <!-- Success Animation -->
+            <div class="success-icon">
+                <i class="fas fa-heart celebration-heart"></i>
+            </div>
+            
+            <!-- Bear Image -->
+            <div class="bear-container">
+                <div class="bear-frame">
+                    <img src="bear_kissing.gif" alt="Happy Bear" class="bear-gif">
+                    <div class="hearts-around">
+                        <span class="floating-heart fh1">💕</span>
+                        <span class="floating-heart fh2">💖</span>
+                        <span class="floating-heart fh3">💗</span>
+                        <span class="floating-heart fh4">💝</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Success Message -->
+            <div class="message-section">
+                <h1 class="main-message">
+                    <span class="line1">Yay! 🎉</span>
+                    <span class="line2 gradient-text">I knew you'd say yes!</span>
+                    <span class="line3">😍😘</span>
+                </h1>
+                
+                <div class="love-messages">
+                    <p class="love-message active" id="message1">
+                        <i class="fas fa-heart"></i>
+                        You've made me the happiest person alive!
+                        <i class="fas fa-heart"></i>
+                    </p>
+                    <p class="love-message" id="message2">
+                        <i class="fas fa-star"></i>
+                        Our love story begins now...
+                        <i class="fas fa-star"></i>
+                    </p>
+                    <p class="love-message" id="message3">
+                        <i class="fas fa-kiss"></i>
+                        You're my sunshine, my moonlight, my everything!
+                        <i class="fas fa-kiss"></i>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-celebrate" onclick="createCelebration()">
+                    <i class="fas fa-party-horn"></i>
+                    <span>Celebrate! 🎉</span>
+                </button>
+                
+                <button class="btn btn-again" onclick="goBack()">
+                    <i class="fas fa-redo"></i>
+                    <span>Ask Again 💕</span>
+                </button>
+            </div>
+            
+            <!-- Love Counter -->
+            <div class="love-counter">
+                <p>Love Level: <span id="loveLevel">∞</span></p>
+                <div class="love-bar">
+                    <div class="love-fill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Rotate love messages
+        let currentMessage = 0;
+        const messages = document.querySelectorAll('.love-message');
+        
+        function rotateLoveMessages() {
+            messages[currentMessage].classList.remove('active');
+            currentMessage = (currentMessage + 1) % messages.length;
+            messages[currentMessage].classList.add('active');
+        }
+        
+        setInterval(rotateLoveMessages, 3000);
+        
+        // Create celebration effect
+        function createCelebration() {
+            // Create confetti
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.innerHTML = ['🎉', '🎊', '💖', '⭐', '✨'][Math.floor(Math.random() * 5)];
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.fontSize = Math.random() * 20 + 15 + 'px';
+                    confetti.style.zIndex = '1000';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                    
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 50);
+            }
+            
+            // Play celebration animation
+            document.querySelector('.celebration-heart').style.animation = 'heartExplode 1s ease-out';
+            setTimeout(() => {
+                document.querySelector('.celebration-heart').style.animation = 'heartPulse 2s ease-in-out infinite';
+            }, 1000);
+        }
+        
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+        
+        // Add CSS for falling animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Auto celebration on page load
+        setTimeout(createCelebration, 1000);
+        
+        // Love bar animation
+        setTimeout(() => {
+            document.querySelector('.love-fill').style.width = '100%';
+        }, 500);
+    </script>
+</body>
+</html>
